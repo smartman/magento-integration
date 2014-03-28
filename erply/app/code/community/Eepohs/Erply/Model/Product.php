@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NB! This is a BETA release of Erply Connector.
  *
@@ -12,8 +13,8 @@
  *
  * @author Eepohs Ltd
  */
-class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply
-{
+class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply {
+
     public function findProduct($sku) {
         $storeId = Mage::app()->getStore()->getId();
         $this->verifyUser($storeId);
@@ -22,8 +23,8 @@ class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply
         );
         $product = $this->sendRequest('getProducts', $params);
         $product = json_decode($product, true);
-        if($product["status"]["responseStatus"] == "ok" && count($product["records"]) > 0) {
-            foreach($product["records"] as $_product) {
+        if ($product["status"]["responseStatus"] == "ok" && count($product["records"]) > 0) {
+            foreach ($product["records"] as $_product) {
                 if ($_product["code2"]) {
                     $code = $_product["code2"];
                 } elseif ($_product["code"]) {
@@ -31,7 +32,7 @@ class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply
                 } else {
                     $code = $_product["code3"];
                 }
-                if($code == $sku) {
+                if ($code == $sku) {
                     return $_product;
                 }
             }
@@ -41,7 +42,7 @@ class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply
     public function importProducts($products, $storeId, $store) {
 
         Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
-        if(!empty($products)) {
+        if (!empty($products)) {
             foreach ($products as $_product) {
 
                 $update = false;
@@ -54,7 +55,7 @@ class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply
                     $sku = $_product["code3"];
                 }
                 $product = Mage::getModel('catalog/product')
-                    ->loadByAttribute('sku', $sku);
+                        ->loadByAttribute('sku', $sku);
 
                 if (!$product) {
                     $product = Mage::getModel('catalog/product')->load($_product["productID"]);
@@ -69,13 +70,13 @@ class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply
                 } else {
                     $update = true;
                 }
-                if($_product["displayedInWebshop"] == 0) {
-                    if($update) {
+                if ($_product["displayedInWebshop"] == 0) {
+                    if ($update) {
                         try {
                             $product->delete();
-                            Mage::helper('eepohs_erply')->log("Delete existing product which should be in webshop id: ".$_product["productID"]." - sku: ".$sku);
+                            Mage::helper('eepohs_erply')->log("Delete existing product which should be in webshop id: " . $_product["productID"] . " - sku: " . $sku);
                         } catch (Exception $e) {
-                            Mage::helper('eepohs_erply')->log("Failed to delete product with message: ".$e->getMessage());
+                            Mage::helper('eepohs_erply')->log("Failed to delete product with message: " . $e->getMessage());
                         }
                     }
                     continue;
@@ -96,24 +97,23 @@ class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply
                 $product->setTaxClassId(0);
 
                 // set the rest of the product information here that can be set on either new/update
-                if(!$update) {
-                    $product->setAttributeSetId((int)Mage::getStoreConfig('eepohs_erply/product/attribute_set', $storeId)); // the product attribute set to use
+                if (!$update) {
+                    $product->setAttributeSetId((int) Mage::getStoreConfig('eepohs_erply/product/attribute_set', $storeId)); // the product attribute set to use
                 }
                 $product->setName($_product["name"]);
                 $category = Mage::getModel('catalog/category')->load($_product["groupID"]);
-                if($category->getName()) {
+                if ($category->getName()) {
                     $product->setCategoryIds(array($_product["groupID"])); // array of categories it will relate to
                 }
                 if (Mage::app()->isSingleStoreMode()) {
                     $product->setWebsiteIds(array(Mage::app()->getStore(true)->getWebsiteId()));
-                }
-                else {
+                } else {
                     $product->setWebsiteIds(array($store->getWebsiteId()));
                 }
 
                 $product->setBatchPrices(array());
                 $product->setStockPriorities(array());
-                //$product->setPrice($_product["price"]);
+                $product->setPrice($_product["price"]);
 
                 // set the product images as such
                 // $image is a full path to the image. I found it to only work when I put all the images I wanted to import into the {magento_path}/media/catalog/products - I just created my own folder called import and it read from those images on import.
@@ -123,32 +123,28 @@ class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply
                 //        $product->addImageToMediaGallery ($image, array ('image'), false, false);
                 //        $product->addImageToMediaGallery ($image, array ('small_image'), false, false);
                 //        $product->addImageToMediaGallery ($image, array ('thumbnail'), false, false);
-
                 // setting custom attributes. for example for a custom attribute called special_attribute
                 // special_attribute will be used on all examples below for the various attribute types
                 //$product->setSpecialAttribute('value here');
-
                 // setting a Yes/No Attribute
                 //        $product->setSpecialField(1);
-
                 // setting a Selection Attribute
                 //$product->setSpecialAttribute($idOfAttributeOption); //specify the ID of the attribute option, eg you creteated an option called Blue in special_attribute it was assigned an ID of some number. Use that number.
-
                 // setting a Mutli-Selection Attribute
                 //$data['special_attribute'] = '101 , 102 , 103'; // coma separated string of option IDs. As ID , ID (mind the spaces before and after coma, it worked for me like that)
                 //        $product->setData($data);
-                if(isset($_product["attributes"])) {
+                if (isset($_product["attributes"])) {
                     $erplyAttributes = $_product["attributes"];
                     $mapping = unserialize(Mage::getStoreConfig('eepohs_erply/product/attributes', $storeId));
-                    if(!empty($erplyAttributes) && !empty($mapping)) {
+                    if (!empty($erplyAttributes) && !empty($mapping)) {
                         $mappings = array();
-                        foreach($mapping as $map) {
+                        foreach ($mapping as $map) {
                             $mappings[$map["erply_attribute"]] = $map["magento_attribute"];
                         }
-                        foreach($erplyAttributes as $attribute) {
-                            if(in_array($attribute["attributeName"], array_keys($mappings))){
-                                if($attribute["attributeValue"]) {
-                                    $product->setData($mappings[$attribute["attributeName"]],$attribute["attributeValue"]);
+                        foreach ($erplyAttributes as $attribute) {
+                            if (in_array($attribute["attributeName"], array_keys($mappings))) {
+                                if ($attribute["attributeValue"]) {
+                                    $product->setData($mappings[$attribute["attributeName"]], $attribute["attributeValue"]);
                                 }
                             }
                         }
@@ -159,4 +155,5 @@ class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply
             }
         }
     }
+
 }
