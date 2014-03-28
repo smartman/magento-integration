@@ -27,7 +27,7 @@ class Eepohs_Erply_Model_Price extends Mage_Core_Model_Abstract
 
     public function updatePrices($rules, $storeId)
     {
-        Mage::helper('Erply')->log("Running price updates");
+        Mage::helper('eepohs_erply')->log("Running price updates");
         if(!empty($rules)) {
             foreach($rules as $rule) {
                 if($rule["type"] == 'PRODUCT') {

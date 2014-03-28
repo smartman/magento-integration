@@ -17,23 +17,23 @@
 <config>
     <modules>
         <Eepohs_Erply>
-            <version>0.1.0</version>
+            <version>2.0.3</version>
         </Eepohs_Erply>
     </modules>
     <global>
         <models>
-            <Erply>
+            <eepohs_erply>
                 <class>Eepohs_Erply_Model</class>
-                <resourceModel>Erply_mysql4</resourceModel>
-            </Erply>
-            <Erply_mysql4>
+                <resourceModel>eepohs_erply_mysql4</resourceModel>
+            </eepohs_erply>
+            <eepohs_erply_mysql4>
                 <class>Eepohs_Erply_Model_Mysql4</class>
                 <entities>
                     <queue>
                         <table>erply_queue</table>
                     </queue>
                 </entities>
-            </Erply_mysql4>
+            </eepohs_erply_mysql4>
         </models>
         <resources>
             <eepohs_erply_setup>
@@ -44,50 +44,50 @@
                     <use>core_setup</use>
                 </connection>
             </eepohs_erply_setup>
-            <Erply_write>
+            <eepohs_erply_write>
                 <connection>
                     <use>core_write</use>
                 </connection>
-            </Erply_write>
-            <Erply_read>
+            </eepohs_erply_write>
+            <eepohs_erply_read>
                 <connection>
                     <use>core_read</use>
                 </connection>
-            </Erply_read>
+            </eepohs_erply_read>
         </resources>
         <blocks>
-            <Erply>
+            <eepohs_erply>
                 <class>Eepohs_Erply_Block</class>
-            </Erply>
+            </eepohs_erply>
         </blocks>
         <helpers>
-            <Erply>
+            <eepohs_erply>
                 <class>Eepohs_Erply_Helper</class>
-            </Erply>
+            </eepohs_erply>
         </helpers>
         <events>
             <default>
                 <observers>
-                    <Erply_checkSchedule>
-                        <class>Erply/observer</class>
+                    <eepohs_erply_checkSchedule>
+                        <class>eepohs_erply/observer</class>
                         <method>checkSchedule</method>
-                    </Erply_checkSchedule>
+                    </eepohs_erply_checkSchedule>
                 </observers>
             </default>
             <sales_order_invoice_pay>
                 <observers>
-                    <Erply_sendOrder>
+                    <eepohs_erply_sendOrder>
                         <type>singleton</type>
-                        <class>Erply/observer</class>
+                        <class>eepohs_erply/observer</class>
                         <method>sendOrder</method>
-                    </Erply_sendOrder>
+                    </eepohs_erply_sendOrder>
                 </observers>
             </sales_order_invoice_pay>
         </events>
     </global>
     <admin>
         <routers>
-            <Erply>
+            <eepohs_erply>
                 <use>admin</use>
                 <args>
                     <module>Eepohs_Erply</module>
@@ -96,82 +96,61 @@
                         <test after="Eepohs_Erply">Mage_Adminhtml</test>
                     </modules>
                 </args>
-            </Erply>
+            </eepohs_erply>
         </routers>
     </admin>
-    <adminhtml>
-        <menu>
-            <system>
-                <children>
-                    <eepohs_erply>
-                        <title>Erply</title>
-                        <action>Erply/Erply</action>
-                        <sort_order>10</sort_order>
-                    </eepohs_erply>
-                </children>
-            </system>
-        </menu>
-        <acl>
-            <resources>
-                <admin>
-                    <children>
-                        <system>
-                            <children>
-                                <config>
-                                    <children>
-                                        <eepohs_erply>
-                                            <title>Erply Configuration Section</title>
-                                        </eepohs_erply>
-                                    </children>
-                                </config>
-                            </children>
-                        </system>
-                    </children>
-                </admin>
-            </resources>
-        </acl>
-    </adminhtml>
     <crontab>
         <jobs>
             <erply_product_import>
                 <run>
-                    <model>Erply/cron::importProducts</model>
+                    <model>eepohs_erply/cron::importProducts</model>
                 </run>
             </erply_product_import>
             <erply_category_import>
                 <run>
-                    <model>Erply/cron::importCategories</model>
+                    <model>eepohs_erply/cron::importCategories</model>
                 </run>
             </erply_category_import>
             <erply_inventory_update>
                 <run>
-                    <model>Erply/cron::updateInventory</model>
+                    <model>eepohs_erply/cron::updateInventory</model>
                 </run>
             </erply_inventory_update>
             <erply_price_update>
                 <run>
-                    <model>Erply/cron::updatePrices</model>
+                    <model>eepohs_erply/cron::updatePrices</model>
                 </run>
             </erply_price_update>
             <erply_product_update>
                 <run>
-                    <model>Erply/cron::importProducts</model>
+                    <model>eepohs_erply/cron::importProducts</model>
                 </run>
             </erply_product_update>
             <erply_category_update>
                 <run>
-                    <model>Erply/cron::updateCategories</model>
+                    <model>eepohs_erply/cron::updateCategories</model>
                 </run>
             </erply_category_update>
             <erply_image_import>
                 <run>
-                    <model>Erply/cron::importImages</model>
+                    <model>eepohs_erply/cron::importImages</model>
                 </run>
             </erply_image_import>
             <erply_check_order_status>
-                <schedule><cron_expr>*/15 * * * *</cron_expr></schedule>
-                <run><model>Erply/cron::checkPendingOrders</model></run>
+                <schedule>
+                    <cron_expr>*/15 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>eepohs_erply/cron::checkPendingOrders</model>
+                </run>
             </erply_check_order_status>
         </jobs>
     </crontab>
+    <default>
+        <eepohs_erply>
+            <general>
+                <log_enabled>1</log_enabled>
+            </general>
+        </eepohs_erply>
+    </default>
 </config>

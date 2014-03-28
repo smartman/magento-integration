@@ -24,7 +24,7 @@ class Eepohs_Erply_Model_Queue extends Mage_Core_Model_Abstract
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Erply/queue');
+        $this->_init('eepohs_erply/queue');
     }
 
     public function loadActive($jobCode)
@@ -59,7 +59,7 @@ class Eepohs_Erply_Model_Queue extends Mage_Core_Model_Abstract
             }
             $queue->setChangedSince($params["changedSince"]);
         }
-        $data["totalRecords"] = Mage::getModel('Erply/Import')->getTotalRecords($data["storeId"], $data["type"], $params);
+        $data["totalRecords"] = Mage::getModel('eepohs_erply/import')->getTotalRecords($data["storeId"], $data["type"], $params);
         if($data["totalRecords"] == 0) {
             return false;
         }
@@ -90,7 +90,7 @@ class Eepohs_Erply_Model_Queue extends Mage_Core_Model_Abstract
         $queue->save();
 
         if ($cron) {
-            Mage::getModel('Erply/Cron')->addCronJob('erply_' . $data["type"], $data["scheduleDateTime"]);
+            Mage::getModel('eepohs_erply/cron')->addCronJob('erply_' . $data["type"], $data["scheduleDateTime"]);
             // $this->_redirectSuccess("Cron Job added!");
         }
         return true;

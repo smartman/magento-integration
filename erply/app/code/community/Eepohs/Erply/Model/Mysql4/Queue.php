@@ -21,6 +21,6 @@ class Eepohs_Erply_Model_Mysql4_Queue extends Mage_Core_Model_Mysql4_Abstract
 {
     public function _construct()
     {
-        $this->_init('Erply/queue', 'queue_id');
+        $this->_init('eepohs_erply/queue', 'queue_id');
     }
 }

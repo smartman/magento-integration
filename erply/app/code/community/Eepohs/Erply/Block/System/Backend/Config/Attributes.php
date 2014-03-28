@@ -19,17 +19,17 @@ class Eepohs_Erply_Block_System_Backend_Config_Attributes extends Mage_Adminhtml
     public function __construct()
     {
         $this->addColumn('erply_attribute', array(
-            'label' => Mage::helper('Erply')->__('Erply Attribute'),
+            'label' => Mage::helper('eepohs_erply')->__('Erply Attribute'),
             'size'  => 28,
             'type'  => 'text'
         ));
         $this->addColumn('magento_attribute', array(
-            'label' => Mage::helper('Erply')->__('Magento Attribute'),
+            'label' => Mage::helper('eepohs_erply')->__('Magento Attribute'),
             'size'  => 28,
             'type'  => 'select'
         ));
         $this->_addAfter = false;
-        $this->_addButtonLabel = Mage::helper('Erply')->__('Add new mapping');
+        $this->_addButtonLabel = Mage::helper('eepohs_erply')->__('Add new mapping');
 
         parent::__construct();
         $this->setTemplate('erply/system/config/field/attributes.phtml');

@@ -21,7 +21,6 @@ class Eepohs_Erply_Model_Mysql4_Queue_Collection  extends Mage_Core_Model_Mysql4
 {
     public function _construct()
     {
-        //parent::__construct();
-        $this->_init('Erply/queue');
+        $this->_init('eepohs_erply/queue');
     }
 }

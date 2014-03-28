@@ -36,7 +36,7 @@ class Eepohs_Erply_Model_Inventory extends Mage_Core_Model_Abstract
 
     public function updateInventory($products, $storeId)
     {
-        Mage::helper('Erply')->log("Running Erply own updateInventory");
+        Mage::helper('eepohs_erply')->log("Running Erply own updateInventory");
         foreach ($products as $_product) {
 
             if ($_product["code"]) {
@@ -55,7 +55,7 @@ class Eepohs_Erply_Model_Inventory extends Mage_Core_Model_Abstract
                 if (!$product->getName()) {
                     return false;
                 } else {
-                    Mage::helper('Erply')->log("Editing old product: " . $_product["productID"]);
+                    Mage::helper('eepohs_erply')->log("Editing old product: " . $_product["productID"]);
                 }
             }
             /**

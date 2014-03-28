@@ -15,10 +15,16 @@
  */
 -->
 <config>
+    <tabs>
+        <eepohs translate="label" module="eepohs_erply">
+            <label>Eepohs Extensions</label>
+            <sort_order>10</sort_order>
+        </eepohs>
+    </tabs>
     <sections>
         <eepohs_erply translate="label">
-            <label>ERPLY</label>
-            <tab>service</tab>
+            <label>Erply Connector</label>
+            <tab>eepohs</tab>
             <frontend_type>text</frontend_type>
             <sort_order>101</sort_order>
             <show_in_default>1</show_in_default>
@@ -28,6 +34,7 @@
                 <general translate="label">
                     <frontend_type>text</frontend_type>
                     <label>General settings</label>
+                    <comment>ERPLY Connector helps to connect to Erply ERP system via its InventoryAPI. Please use configuration settings below to make your Erply Connector work.</comment>
                     <sort_order>10</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>0</show_in_website>
@@ -47,7 +54,7 @@
                 <account translate="label">
                     <frontend_type>text</frontend_type>
                     <label>Account settings</label>
-                    <sort_order>10</sort_order>
+                    <sort_order>20</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -110,7 +117,7 @@
                 <customer translate="label">
                     <frontend_type>text</frontend_type>
                     <label>Customer settings</label>
-                    <sort_order>10</sort_order>
+                    <sort_order>50</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -136,14 +143,14 @@
                 <product translate="label">
                     <frontend_type>text</frontend_type>
                     <label>Product settings</label>
-                    <sort_order>10</sort_order>
+                    <sort_order>40</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
                         <attribute_set translate="label">
                             <frontend_type>select</frontend_type>
-                            <source_model>Erply/System_Backend_Config_AttributeSet</source_model>
+                            <source_model>eepohs_erply/system_backend_config_attributeSet</source_model>
                             <label>Attribute Set</label>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
@@ -153,7 +160,7 @@
                         </attribute_set>
                         <attributes translate="label">
                             <label>Attributes</label>
-                            <frontend_model>Erply/system_backend_config_attributes</frontend_model>
+                            <frontend_model>eepohs_erply/system_backend_config_attributes</frontend_model>
                             <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
                             <sort_order>11</sort_order>
                             <show_in_default>1</show_in_default>
@@ -182,7 +189,7 @@
                 <update_schedule translate="label">
                     <frontend_type>text</frontend_type>
                     <label>Update Schedule</label>
-                    <sort_order>20</sort_order>
+                    <sort_order>70</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>0</show_in_website>
                     <show_in_store>0</show_in_store>
@@ -237,7 +244,7 @@
                 <queue translate="label">
                     <frontend_type>text</frontend_type>
                     <label>Queue settings</label>
-                    <sort_order>30</sort_order>
+                    <sort_order>80</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>

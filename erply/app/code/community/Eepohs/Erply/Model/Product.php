@@ -61,9 +61,9 @@ class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply
                     if (!$product->getName()) {
                         $product = new Mage_Catalog_Model_Product();
                         $product->setId($_product["productID"]);
-                        Mage::helper('Erply')->log("Creating new product: " . $_product["productID"]);
+                        Mage::helper('eepohs_erply')->log("Creating new product: " . $_product["productID"]);
                     } else {
-                        Mage::helper('Erply')->log("Editing old product: " . $_product["productID"]);
+                        Mage::helper('eepohs_erply')->log("Editing old product: " . $_product["productID"]);
                         $update = true;
                     }
                 } else {
@@ -73,9 +73,9 @@ class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply
                     if($update) {
                         try {
                             $product->delete();
-                            Mage::helper('Erply')->log("Delete existing product which should be in webshop id: ".$_product["productID"]." - sku: ".$sku);
+                            Mage::helper('eepohs_erply')->log("Delete existing product which should be in webshop id: ".$_product["productID"]." - sku: ".$sku);
                         } catch (Exception $e) {
-                            Mage::helper('Erply')->log("Failed to delete product with message: ".$e->getMessage());
+                            Mage::helper('eepohs_erply')->log("Failed to delete product with message: ".$e->getMessage());
                         }
                     }
                     continue;
@@ -155,7 +155,7 @@ class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply
                     }
                 }
                 $product->save();
-                Mage::helper('Erply')->log("Added: " . $product->getSku());
+                Mage::helper('eepohs_erply')->log("Added: " . $product->getSku());
             }
         }
     }

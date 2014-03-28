@@ -42,7 +42,7 @@ class Eepohs_Erply_Model_Observer extends Mage_Core_Model_Abstract
         $pending = Mage::getModel('cron/schedule')->getCollection()
             ->addFieldToFilter('status', Mage_Cron_Model_Schedule::STATUS_PENDING)
             ->load();
-        $activeQueues = Mage::getModel('Erply/Queue')->getCollection()
+        $activeQueues = Mage::getModel('eepohs_erply/queue')->getCollection()
             ->addFieldToFilter('status', 1)
             ->load();
         $exists = array();
@@ -66,7 +66,7 @@ class Eepohs_Erply_Model_Observer extends Mage_Core_Model_Abstract
 
 
 
-            Mage::helper('Erply')->log("Setting Erply Cron for ".$jobCode);
+            Mage::helper('eepohs_erply')->log("Setting Erply Cron for ".$jobCode);
             $cronSchedule = Mage::getModel('cron/schedule');
 
 
@@ -96,7 +96,7 @@ class Eepohs_Erply_Model_Observer extends Mage_Core_Model_Abstract
                             $queueData["storeId"] = $storeId;
                             $queueData["scheduleDateTime"] = $ts;
                             $queueData["changedSince"] = "last";
-                            $queue = Mage::getModel('Erply/Queue')->addQueue($queueData, false);
+                            $queue = Mage::getModel('eepohs_erply/queue')->addQueue($queueData, false);
                             if(!$queueAdded) $queueAdded = $queue;
                         }
                     }
@@ -120,7 +120,7 @@ class Eepohs_Erply_Model_Observer extends Mage_Core_Model_Abstract
         $incrementId = $order->getIncrementId();
         $storeId = $order->getStoreId();
         if(Mage::getStoreConfig('eepohs_erply/account/disable_order', $storeId)) {
-            Mage::helper('Erply')->log("Sending order to erply is disabled for store: #".$storeId);
+            Mage::helper('eepohs_erply')->log("Sending order to erply is disabled for store: #".$storeId);
             return false;
         }
         if($incrementId){
@@ -128,51 +128,51 @@ class Eepohs_Erply_Model_Observer extends Mage_Core_Model_Abstract
                 //$data["id"] = $incrementId;
                 //$data["id"] = $incrementId;
                 $orderData = Mage::getModel('sales/order_api')->info($incrementId);
-                $e = Mage::getModel('Erply/Erply');
+                $e = Mage::getModel('eepohs_erply/erply');
                 $storeId = $order->getStoreId();
                 $e->verifyUser($storeId);
-                $data = Mage::getModel('Erply/Order')->prepareOrder($orderData, false, $storeId);
+                $data = Mage::getModel('eepohs_erply/order')->prepareOrder($orderData, false, $storeId);
                 if ( $data ) {
                     $response = $e->sendRequest('saveSalesDocument', $data);
-                    Mage::helper('Erply')->log("Saving order data to erply:" . print_r($data, true));
+                    Mage::helper('eepohs_erply')->log("Saving order data to erply:" . print_r($data, true));
                     $response = json_decode($response, true);
                     if($response["status"]["responseStatus"] == "ok") {
                         $documentId = $response["records"][0]["invoiceID"];
                         $this->sendPayment($data, $storeId, $documentId);
-                        Mage::helper('Erply')->log("Erply reponse on order save:" . var_export($response, true));
-                        Mage::helper('Erply')->log("Saved order to erply: #" . $response['records'][0]['invoiceID']);
-                        Mage::helper('Erply')->log("Erply documentId is: ".$documentId);
+                        Mage::helper('eepohs_erply')->log("Erply reponse on order save:" . var_export($response, true));
+                        Mage::helper('eepohs_erply')->log("Saved order to erply: #" . $response['records'][0]['invoiceID']);
+                        Mage::helper('eepohs_erply')->log("Erply documentId is: ".$documentId);
                     }
 
                     return $response['records'][0]['invoiceID'];
                 } else {
-                    Mage::helper('Erply')->log("Failed to send order");
+                    Mage::helper('eepohs_erply')->log("Failed to send order");
                     return false;
                 }
             } catch (Exception $e) {
-                Mage::helper('Erply')->log("Failed to send order to Erply with message: ".$e->getMessage());
-                Mage::helper('Erply')->log("Exception trace: ".$e->getTraceAsString());
+                Mage::helper('eepohs_erply')->log("Failed to send order to Erply with message: ".$e->getMessage());
+                Mage::helper('eepohs_erply')->log("Exception trace: ".$e->getTraceAsString());
             }
         }
     }
 
     protected function sendPayment($orderData, $storeId, $documentId) {
         try {
-            $e = Mage::getModel('Erply/Erply');
+            $e = Mage::getModel('eepohs_erply/erply');
             $e->verifyUser($storeId);
             $orderData["documentID"] = $documentId;
-            $paymentData = Mage::getModel('Erply/Payment')->preparePayment($orderData, $storeId);
+            $paymentData = Mage::getModel('eepohs_erply/payment')->preparePayment($orderData, $storeId);
             if($paymentData) {
-                Mage::helper('Erply')->log("Erply - sending payment data: ".print_r($paymentData, true));
+                Mage::helper('eepohs_erply')->log("Erply - sending payment data: ".print_r($paymentData, true));
                 $response = $e->sendRequest('savePayment', $paymentData);
                 $response = json_decode($response, true);
-                Mage::helper('Erply')->log("Erply payment saving reponse: ".print_r($response, true));
+                Mage::helper('eepohs_erply')->log("Erply payment saving reponse: ".print_r($response, true));
                 if($response["status"]["responseStatus"] == "ok") {
-                    Mage::helper('Erply')->log("Erply payment saving was successful");
+                    Mage::helper('eepohs_erply')->log("Erply payment saving was successful");
                 }
             }
         } catch (Exception $e) {
-            Mage::helper('Erply')->log("Failed to create payment for order: ".$e->getMessage());
+            Mage::helper('eepohs_erply')->log("Failed to create payment for order: ".$e->getMessage());
         }
     }
 

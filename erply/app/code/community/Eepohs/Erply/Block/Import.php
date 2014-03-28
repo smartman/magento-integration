@@ -40,28 +40,28 @@ class Eepohs_Erply_Block_Import extends Mage_Adminhtml_Block_Widget_Form_Contain
         $fieldset = $form->addFieldset('import_fieldset', array('legend' => 'Product Import'));
         $fieldset->addField('import_type', 'select', array(
             'name'      => 'import_type',
-            'title'     => Mage::helper('Erply')->__('Import Type'),
-            'label'     => Mage::helper('Erply')->__('Import Type'),
+            'title'     => Mage::helper('eepohs_erply')->__('Import Type'),
+            'label'     => Mage::helper('eepohs_erply')->__('Import Type'),
             'required'  => true,
             'values'    => array(
-                'product_import'    => Mage::helper('Erply')->__('Product Import'),
-                'category_import'   => Mage::helper('Erply')->__('Category Import'),
-                'inventory_update'  => Mage::helper('Erply')->__('Inventory Update'),
-                'price_update'  => Mage::helper('Erply')->__('Price Update'),
-                'image_import'      => Mage::helper('Erply')->__('Image Import'),
+                'product_import'    => Mage::helper('eepohs_erply')->__('Product Import'),
+                'category_import'   => Mage::helper('eepohs_erply')->__('Category Import'),
+                'inventory_update'  => Mage::helper('eepohs_erply')->__('Inventory Update'),
+                'price_update'  => Mage::helper('eepohs_erply')->__('Price Update'),
+                'image_import'      => Mage::helper('eepohs_erply')->__('Image Import'),
             )
         ));
         $fieldset->addField('store_id', 'select', array(
             'name'      => 'store_id',
-            'title'     => Mage::helper('Erply')->__('Store'),
-            'label'     => Mage::helper('Erply')->__('Store'),
+            'title'     => Mage::helper('eepohs_erply')->__('Store'),
+            'label'     => Mage::helper('eepohs_erply')->__('Store'),
             'required'  => true,
             'values'    => Mage::getSingleton('adminhtml/system_store')->getStoreValuesForForm(false, true)
         ));
 //        $fieldset->addField('schedule_date', 'date', array(
 //            'name'      => 'schedule_date',
-//            'title'     => Mage::helper('Erply')->__('Schedule Date'),
-//            'label'     => Mage::helper('Erply')->__('Schedule Date'),
+//            'title'     => Mage::helper('eepohs_erply')->__('Schedule Date'),
+//            'label'     => Mage::helper('eepohs_erply')->__('Schedule Date'),
 //            'required'  => true,
 //            'format'    => '%Y-%m-%d',
 //            'default'   => "NOW()",
@@ -69,12 +69,12 @@ class Eepohs_Erply_Block_Import extends Mage_Adminhtml_Block_Widget_Form_Contain
 //        ));
 //        $fieldset->addField('schedule_time', 'time', array(
 //            'name'      => 'schedule_time',
-//            'title'     => Mage::helper('Erply')->__('Schedule Time'),
-//            'label'     => Mage::helper('Erply')->__('Schedule Time'),
+//            'title'     => Mage::helper('eepohs_erply')->__('Schedule Time'),
+//            'label'     => Mage::helper('eepohs_erply')->__('Schedule Time'),
 //            'required'  => true,
 //        ));
         $fieldset->addField('schedule_import', 'submit', array(
-            'label'     => Mage::helper('Erply')->__('Schedule Import'),
+            'label'     => Mage::helper('eepohs_erply')->__('Schedule Import'),
             'required'  => true,
             'value'  => 'Schedule Import',
             'after_element_html' => '',

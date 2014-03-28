@@ -27,7 +27,7 @@ class Eepohs_Erply_Model_Image extends Mage_Core_Model_Abstract
 
     public function updateImages($products, $storeId)
     {
-        Mage::helper('Erply')->log("Running Erply Image Import");
+        Mage::helper('eepohs_erply')->log("Running Erply Image Import");
         foreach ($products as $_product) {
 
             if ($_product["code2"]) {
@@ -46,7 +46,7 @@ class Eepohs_Erply_Model_Image extends Mage_Core_Model_Abstract
                 if (!$product->getName()) {
                     continue;
                 } else {
-                    Mage::helper('Erply')->log("Editing old product: " . $_product["productID"]);
+                    Mage::helper('eepohs_erply')->log("Editing old product: " . $_product["productID"]);
                 }
             }
             if(!empty($_product["images"])) {

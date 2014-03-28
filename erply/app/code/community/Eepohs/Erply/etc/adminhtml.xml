@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <menu>
+        <eepohs translate="title" module="eepohs_erply">
+            <title>Eepohs</title>
+            <sort_order>100</sort_order>
+            <children>
+                <eepohs_erply>
+                    <title>Erply</title>
+                    <action>eepohs_erply/erply</action>
+                    <sort_order>20</sort_order>
+                </eepohs_erply>
+            </children>
+        </eepohs>
+    </menu>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <eepohs_erply>
+                                        <title>Erply Configuration Section</title>
+                                    </eepohs_erply>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

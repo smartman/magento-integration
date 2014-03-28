@@ -28,7 +28,7 @@ class Eepohs_Erply_Model_Product_Import extends Eepohs_Erply_Model_Erply
 
     public function importProducts() {
 
-        $queue = Mage::getModel('Erply/Queue')->loadActive('erply_product_import');
+        $queue = Mage::getModel('eepohs_erply/queue')->loadActive('erply_product_import');
         $params = array();
         if($queue) {
             $runEvery = Mage::getStoreConfig('eepohs_erply/queue/run_every', $queue->getStoreId());
@@ -45,7 +45,7 @@ class Eepohs_Erply_Model_Product_Import extends Eepohs_Erply_Model_Erply
                 $thisRunTime = strtotime($queue->getScheduledAt());
                 $newRunTime = strtotime('+'.$runEvery.'minute', $thisRunTime);
                 $scheduleDateTime = date('Y-m-d H:i:s', $newRunTime);
-                Mage::getModel('Erply/Cron')->addCronJob('erply_product_import', $scheduleDateTime);
+                Mage::getModel('eepohs_erply/cron')->addCronJob('erply_product_import', $scheduleDateTime);
                 $queue->setScheduledAt($scheduleDateTime);
             }
             $loops--;
@@ -60,12 +60,12 @@ class Eepohs_Erply_Model_Product_Import extends Eepohs_Erply_Model_Erply
             for($i = $firstPage; $i <= ($firstPage + $loops);$i++) {
 
                 $parameters = array_merge(array('recordsOnPage' => $pageSize, 'pageNo'=>$i), $params);
-                Mage::helper('Erply')->log("Erply request: ");
-                Mage::helper('Erply')->log($parameters);
+                Mage::helper('eepohs_erply')->log("Erply request: ");
+                Mage::helper('eepohs_erply')->log($parameters);
                 $result = $this->sendRequest('getProducts', $parameters);
                 $return = "";
-                Mage::helper('Erply')->log("Erply product import:");
-                Mage::helper('Erply')->log($result);
+                Mage::helper('eepohs_erply')->log("Erply product import:");
+                Mage::helper('eepohs_erply')->log($result);
                 $output = json_decode($result, true);
                 $start = time();
                 foreach($output["records"] as $_product) {
@@ -85,9 +85,9 @@ class Eepohs_Erply_Model_Product_Import extends Eepohs_Erply_Model_Erply
                         if(!$product->getName()) {
                             $product = new Mage_Catalog_Model_Product();
                             $product->setId($_product["productID"]);
-                            Mage::helper('Erply')->log("Creating new product: ".$_product["productID"]);
+                            Mage::helper('eepohs_erply')->log("Creating new product: ".$_product["productID"]);
                         } else {
-                            Mage::helper('Erply')->log("Editing old product: ".$_product["productID"]);
+                            Mage::helper('eepohs_erply')->log("Editing old product: ".$_product["productID"]);
                         }
                     }
                     // product does not exist so we will be creating a new one.
@@ -153,7 +153,7 @@ class Eepohs_Erply_Model_Product_Import extends Eepohs_Erply_Model_Erply
                     //$data['special_attribute'] = '101 , 102 , 103'; // coma separated string of option IDs. As ID , ID (mind the spaces before and after coma, it worked for me like that)
                     //        $product->setData($data);
                     $product->save();
-                    Mage::helper('Erply')->log("Added: ".$product->getSku());
+                    Mage::helper('eepohs_erply')->log("Added: ".$product->getSku());
                 }
                 unset($output);
             }

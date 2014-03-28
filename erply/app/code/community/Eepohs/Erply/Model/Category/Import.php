@@ -58,7 +58,7 @@ class Eepohs_Erply_Model_Category_Import extends Mage_Core_Model_Abstract
                 $childs = $parentCategory->getAllChildren(true);
                 $lastCategory = end($childs);
 //                $category->setPath($parentCategory->getPath());
-//                Mage::helper('Erply')->log("Parent path: ".$parentCategory->getPath());
+//                Mage::helper('eepohs_erply')->log("Parent path: ".$parentCategory->getPath());
 //
 //                $pathIds = $parentCategory->getPathIds();
 //                if(!in_array($parent, $pathIds)) {
@@ -67,8 +67,8 @@ class Eepohs_Erply_Model_Category_Import extends Mage_Core_Model_Abstract
 //                $category->addData(array(
 //                    'path'=>implode('/', $pathIds)
 //                ));
-//                Mage::helper('Erply')->log("Parent path ids: ");
-//                Mage::helper('Erply')->log($pathIds);
+//                Mage::helper('eepohs_erply')->log("Parent path ids: ");
+//                Mage::helper('eepohs_erply')->log($pathIds);
                 $category->addData(array(
                     'available_sort_by' => $this->availableSortBy,
                     'default_sort_by' => $this->defaultSortBy,
@@ -89,7 +89,7 @@ class Eepohs_Erply_Model_Category_Import extends Mage_Core_Model_Abstract
                     }
 
                     $category->save();
-                    Mage::helper('Erply')->log("Category saved:". $id);
+                    Mage::helper('eepohs_erply')->log("Category saved:". $id);
                     $category->move($parent, $lastCategory);
                 }
                 catch (Mage_Core_Exception $e) {
@@ -102,7 +102,7 @@ class Eepohs_Erply_Model_Category_Import extends Mage_Core_Model_Abstract
                 }
 //                Mage::getModel('catalog/category_api')->create($parent, $data, $store);
             } else {
-                Mage::helper('Erply')->log("Updating category: ".$id);
+                Mage::helper('eepohs_erply')->log("Updating category: ".$id);
                 Mage::getModel('catalog/category_api')->update($id, $data, $store);
             }
             // product does not exist so we will be creating a new one.

@@ -37,8 +37,8 @@ class Eepohs_Erply_Model_Order extends Mage_Core_Model_Abstract
 
         $this->_storeId = $storeId;
 
-        Mage::helper('Erply')->log("Customer ID on order: " . $order['customer_id']);
-        Mage::helper('Erply')->log($order["billing_address"]);
+        Mage::helper('eepohs_erply')->log("Customer ID on order: " . $order['customer_id']);
+        Mage::helper('eepohs_erply')->log($order["billing_address"]);
         $this->_data = array();
         $erpAttributes = array();
 
@@ -56,14 +56,14 @@ class Eepohs_Erply_Model_Order extends Mage_Core_Model_Abstract
         // billing information.
         if ( isset($order['customer_id']) && !empty($order['customer_id']) ) {
             // Customer exists. Synchronize customer before procceeding.
-            $customer = Mage::getSingleton('Erply/Customer');
+            $customer = Mage::getSingleton('eepohs_erply/customer');
             $customerId = $customer->getCustomerExists($order['customer_email'], $storeId);
 
             // check if order customer synchronized
             if ( !$customerId ) {
                 if ( !$customer->addNewCustomer($order['customer_id'], $storeId) ) {
 //                    throw new Exception("Couldn't add new customer");
-                    Mage::helper('Erply')->log(sprintf('%s(%s): Couldn not add new customer', __METHOD__, __LINE__));
+                    Mage::helper('eepohs_erply')->log(sprintf('%s(%s): Couldn not add new customer', __METHOD__, __LINE__));
                 }
             }
 
@@ -71,7 +71,7 @@ class Eepohs_Erply_Model_Order extends Mage_Core_Model_Abstract
                 $this->_data['customerID'] = $this->_data['payerID'] = $customerId;
 
                 // payerAddressID
-                $address = Mage::getModel('Erply/Address');
+                $address = Mage::getModel('eepohs_erply/address');
                 $billingAddressTypeId = Mage::getStoreConfig('eepohs_erply/customer/billing_address', $this->_storeId);
                 $shippingAddressTypeId = Mage::getStoreConfig('eepohs_erply/customer/shipping_address', $this->_storeId);
 
@@ -88,12 +88,12 @@ class Eepohs_Erply_Model_Order extends Mage_Core_Model_Abstract
                 , 'fax' => $order['billing_address']['fax']
                 , 'notes' => 'Created from Magento'
             );
-            $customerId = Mage::getModel('Erply/Customer')->sendCustomer($customerData, $this->_storeId);
+            $customerId = Mage::getModel('eepohs_erply/customer')->sendCustomer($customerData, $this->_storeId);
             if ( !empty($customerId) ) {
                 $this->_data['customerID'] = $this->_data['payerID'] = $customerId;
 
                 // payerAddressID
-                $address = Mage::getModel('Erply/Address');
+                $address = Mage::getModel('eepohs_erply/address');
                 $billingAddressTypeId = Mage::getStoreConfig('eepohs_erply/customer/billing_address', $this->_storeId);
                 $shippingAddressTypeId = Mage::getStoreConfig('eepohs_erply/customer/shipping_address', $this->_storeId);
 
@@ -165,7 +165,7 @@ Message: %s', $giftMessageMod->getSender(), $giftMessageMod->getRecipient(), $gi
         /*
          * Items
          */
-        $productModel = Mage::getModel('Erply/Product');
+        $productModel = Mage::getModel('eepohs_erply/product');
         $key = 1;
         $erpVatrates = $this->getVatRates();
         if ( !empty($erpVatrates) ) {
@@ -274,7 +274,7 @@ Message: %s', $giftMessageMod->getSender(), $giftMessageMod->getRecipient(), $gi
 
     protected function getVatRates()
     {
-        $erply = Mage::getModel('Erply/Erply');
+        $erply = Mage::getModel('eepohs_erply/erply');
         $erply->verifyUser($this->_storeId);
         $vatRates = $erply->sendRequest('getVatRates');
         $vatRates = json_decode($vatRates, true);

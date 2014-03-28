@@ -35,7 +35,7 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
     public function addCronJob($jobCode, $schedule = null)
     {
         $timecreated = strftime("%Y-%m-%d %H:%M:%S", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y")));
-        Mage::helper('Erply')->log("Scheduled at:".$schedule);
+        Mage::helper('eepohs_erply')->log("Scheduled at:".$schedule);
         if (!$schedule) {
             $timescheduled = strftime("%Y-%m-%d %H:%M:%S", mktime(date("H"), date("i") + 5, date("s"), date("m"), date("d"), date("Y")));
         } else {
@@ -58,7 +58,7 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
     public function importCategories()
     {
 
-        $queue = Mage::getModel('Erply/Queue')->loadActive('erply_category_import');
+        $queue = Mage::getModel('eepohs_erply/queue')->loadActive('erply_category_import');
         if (count($queue) > 0) {
             foreach ($queue as $item) {
                 if ($item) {
@@ -94,7 +94,7 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
                         $result = $this->sendRequest('getProductGroups', $parameters);
                         //            $return = "";
                         $output = json_decode($result, true);
-                        Mage::helper('Erply')->log("Erply Categories Response: " . $result);
+                        Mage::helper('eepohs_erply')->log("Erply Categories Response: " . $result);
                         if ($output["status"]["responseStatus"] == "error" || count($output["records"]) == 0) return false;
                         //            $start = time();
                         $categories = $output["records"];
@@ -104,12 +104,12 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
                             $rootCategory = Mage::getModel('core/store')->load($item->getStoreId())->getRootCategoryId();
                         }
 
-                        Mage::getModel('Erply/Category_Import')->addCategories($categories, $rootCategory, $item->getStoreId());
+                        Mage::getModel('eepohs_erply/category_import')->addCategories($categories, $rootCategory, $item->getStoreId());
                     }
                 }
             }
             if( $scheduleDateTime ) {
-                Mage::getModel('Erply/Cron')->addCronJob('erply_category_import', $scheduleDateTime);
+                Mage::getModel('eepohs_erply/cron')->addCronJob('erply_category_import', $scheduleDateTime);
             }
         }
     }
@@ -117,7 +117,7 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
     public function updateInventory()
     {
         $code = 'erply_inventory_update';
-        $queue = Mage::getModel('Erply/Queue')->loadActive($code);
+        $queue = Mage::getModel('eepohs_erply/queue')->loadActive($code);
         $scheduleDateTime = false;
         $params = array('getStockInfo' => 1);
         if (count($queue) > 0) {
@@ -158,7 +158,7 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
                         //            $return = "";
                         $output = json_decode($result, true);
 
-//                        Mage::helper('Erply')->log("Erply Stock Response: " . $result);
+//                        Mage::helper('eepohs_erply')->log("Erply Stock Response: " . $result);
                         if ($output["status"]["responseStatus"] == "error" || count($output["records"]) == 0) return false;
                         //            $start = time();
 
@@ -172,11 +172,11 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
                         if($end >= count($stockData)) {
                             $end = count($stockData)-1;
                         }
-                        Mage::getModel('Erply/Inventory')->updateInventory($stockData, $item->getStoreId(), $start, $end);
+                        Mage::getModel('eepohs_erply/inventory')->updateInventory($stockData, $item->getStoreId(), $start, $end);
                         //            $return = "";
 
                         if($end == count($stockData))break;
-//                        Mage::helper('Erply')->log("Erply Prices Response: " . $result);
+//                        Mage::helper('eepohs_erply')->log("Erply Prices Response: " . $result);
 
                     }
 
@@ -186,7 +186,7 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
             }
 
             if ($scheduleDateTime) {
-                Mage::getModel('Erply/Cron')->addCronJob($code, $scheduleDateTime);
+                Mage::getModel('eepohs_erply/cron')->addCronJob($code, $scheduleDateTime);
             }
 
         }
@@ -195,7 +195,7 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
     public function updatePrices()
     {
         $code = 'erply_price_update';
-        $queue = Mage::getModel('Erply/Queue')->loadActive($code);
+        $queue = Mage::getModel('eepohs_erply/queue')->loadActive($code);
         $scheduleDateTime = false;
         $params = array();
         if (count($queue) > 0) {
@@ -249,18 +249,18 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
                         if($end >= count($rules)) {
                             $end = count($rules)-1;
                         }
-                        Mage::getModel('Erply/Price')->updatePrices($rules, $item->getStoreId(),$start, $end);
+                        Mage::getModel('eepohs_erply/price')->updatePrices($rules, $item->getStoreId(),$start, $end);
                         //            $return = "";
 
                         if($end == count($rules))break;
-//                        Mage::helper('Erply')->log("Erply Prices Response: " . $result);
+//                        Mage::helper('eepohs_erply')->log("Erply Prices Response: " . $result);
 
                     }
                 }
             }
 
             if ($scheduleDateTime) {
-                Mage::getModel('Erply/Cron')->addCronJob($code, $scheduleDateTime);
+                Mage::getModel('eepohs_erply/cron')->addCronJob($code, $scheduleDateTime);
             }
 
         }
@@ -269,7 +269,7 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
     public function importProducts()
     {
         Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
-        $queue = Mage::getModel('Erply/Queue')->loadActive('erply_product_import');
+        $queue = Mage::getModel('eepohs_erply/queue')->loadActive('erply_product_import');
         $params = array();
         $scheduleDateTime = false;
         if (count($queue) > 0) {
@@ -322,29 +322,29 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
                             'displayedInWebshop' => 1,
                             'active'    => 1
                         ), $params);
-                        Mage::helper('Erply')->log("Erply request: ");
-                        Mage::helper('Erply')->log($parameters);
+                        Mage::helper('eepohs_erply')->log("Erply request: ");
+                        Mage::helper('eepohs_erply')->log($parameters);
                         $result = $this->sendRequest('getProducts', $parameters);
                         $return = "";
-                        Mage::helper('Erply')->log("Erply product import:");
-//                        Mage::helper('Erply')->log($result);
+                        Mage::helper('eepohs_erply')->log("Erply product import:");
+//                        Mage::helper('eepohs_erply')->log($result);
                         $output = json_decode($result, true);
                         if ($output["status"]["responseStatus"] == "error" || count($output["records"]) == 0) return false;
                         $start = time();
                         $products = $output["records"];
-                        Mage::getModel('Erply/Product')->importProducts($products, $storeId, $store);
+                        Mage::getModel('eepohs_erply/product')->importProducts($products, $storeId, $store);
                         unset($output);
                     }
                 }
             }
             if( $scheduleDateTime ) {
-                Mage::getModel('Erply/Cron')->addCronJob('erply_product_import', $scheduleDateTime);
+                Mage::getModel('eepohs_erply/cron')->addCronJob('erply_product_import', $scheduleDateTime);
             }
         }
     }
 
     public function importImages() {
-        $queue = Mage::getModel('Erply/Queue')->loadActive('erply_image_import');
+        $queue = Mage::getModel('eepohs_erply/queue')->loadActive('erply_image_import');
         $params = array();
         $scheduleDateTime = false;
         if (count($queue) > 0) {
@@ -386,17 +386,17 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
                         //            $return = "";
                         $output = json_decode($result, true);
 
-                        Mage::helper('Erply')->log("Erply Images Response: " . $result);
+                        Mage::helper('eepohs_erply')->log("Erply Images Response: " . $result);
                         if ($output["status"]["responseStatus"] == "error" || count($output["records"]) == 0) return false;
                         //            $start = time();
                         $products = $output["records"];
 
-                        Mage::getModel('Erply/Image')->updateImages($products, $item->getStoreId());
+                        Mage::getModel('eepohs_erply/image')->updateImages($products, $item->getStoreId());
                     }
                 }
             }
             if( $scheduleDateTime ) {
-                Mage::getModel('Erply/Cron')->addCronJob('erply_image_import', $scheduleDateTime);
+                Mage::getModel('eepohs_erply/cron')->addCronJob('erply_image_import', $scheduleDateTime);
             }
         }
     }
@@ -405,8 +405,8 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
         $orders = Mage::getModel('sales/order')->getCollection()->addAttributeToSelect("*")->addAttributeToFilter('status', 'processing');
         $params = array();
         if($orders->getSize() > 0) {
-            Mage::helper('Erply')->log("Starting order status checking");
-            Mage::helper('Erply')->log("Found ".$orders->getSize()." pending orders in Magento");
+            Mage::helper('eepohs_erply')->log("Starting order status checking");
+            Mage::helper('eepohs_erply')->log("Found ".$orders->getSize()." pending orders in Magento");
             foreach($orders as $order) {
 
                 $isComplete = false;
@@ -416,10 +416,10 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
                 $e->verifyUser($storeId);
 
                 $params["number"] = $order->getIncrementId();
-                Mage::helper('Erply')->log("Request to Erply for Magento order #".$order->getIncrementId()." - ".print_r($params, true));
+                Mage::helper('eepohs_erply')->log("Request to Erply for Magento order #".$order->getIncrementId()." - ".print_r($params, true));
                 $request = $e->sendRequest('getSalesDocuments', $params);
                 $output = json_decode($request, true);
-                Mage::helper('Erply')->log("Reponse from Erply for Magento order #".$order->getIncrementId()." - ".print_r($output, true));
+                Mage::helper('eepohs_erply')->log("Reponse from Erply for Magento order #".$order->getIncrementId()." - ".print_r($output, true));
                 if ($output["status"]["responseStatus"] == "error" || count($output["records"]) == 0) continue;
 
                 $erpOrder = $output["records"][0];
@@ -435,15 +435,15 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply
                         ->addObject($shipment->getOrder())
                         ->save();
 
-                    Mage::helper('Erply')->log("Marked order #".$order->getIncrementId()." as Completed");
+                    Mage::helper('eepohs_erply')->log("Marked order #".$order->getIncrementId()." as Completed");
                 } elseif($erpOrder["invoiceState"] == "CANCELLED") {
                     if($order->canCancel()) {
                         $order->cancel()->save();
-                        Mage::helper('Erply')->log("Marked order #".$order->getIncrementId()." as Cancelled");
+                        Mage::helper('eepohs_erply')->log("Marked order #".$order->getIncrementId()." as Cancelled");
                     }
                 }
                 }catch (Exception $e) {
-                    Mage::helper('Erply')->log("Failed to change order status: ".$e->getMessage());
+                    Mage::helper('eepohs_erply')->log("Failed to change order status: ".$e->getMessage());
                 }
 
             }

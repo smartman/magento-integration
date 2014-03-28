@@ -49,7 +49,7 @@ class Eepohs_Erply_Model_Payment extends Mage_Core_Model_Abstract
 
         if(!$billing) return false;
 
-        Mage::helper('Erply')->log("Starting to prepare Payment");
+        Mage::helper('eepohs_erply')->log("Starting to prepare Payment");
 
         $this->_data = array();
         $erpAttributes = array();
@@ -67,7 +67,7 @@ class Eepohs_Erply_Model_Payment extends Mage_Core_Model_Abstract
 
     protected function getVatRates()
     {
-        $erply = Mage::getModel('Erply/Erply');
+        $erply = Mage::getModel('eepohs_erply/erply');
         $erply->verifyUser($this->_storeId);
         $vatRates = $erply->sendRequest('getVatRates');
         $vatRates = json_decode($vatRates, true);
