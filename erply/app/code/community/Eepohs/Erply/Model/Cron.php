@@ -254,6 +254,7 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply {
     }
 
     public function importProducts() {
+        Mage::helper('eepohs_erply')->log("Import products started");
         Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
         $queue = Mage::getModel('eepohs_erply/queue')->loadActive('erply_product_import');
         $params = array();
@@ -301,15 +302,13 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply {
 
                     $store = Mage::getModel('core/store')->load($item->getStoreId());
                     for ($i = $firstPage; $i <= ($firstPage + $loops); $i++) {
-
+                        Mage::helper('eepohs_erply')->log("Product import in Cron.php: total=" . $item->getTotalRecords() . " pageSize=$pageSize firstpage=$firstPage currentpage=" . $i . " recordsLeft=$recordsLeft");
                         $parameters = array_merge(array(
                             'recordsOnPage' => $pageSize,
                             'pageNo' => $i,
                             'displayedInWebshop' => 1,
-                            'active' => 1,
-                            'getStockInfo' => 1
+                            'active' => 1
                                 ), $params);
-                        Mage::helper('eepohs_erply')->log("Erply request: ");
                         Mage::helper('eepohs_erply')->log($parameters);
                         $result = $this->sendRequest('getProducts', $parameters);
                         Mage::helper('eepohs_erply')->log("Erply product import:");
@@ -326,7 +325,14 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply {
                 }
             }
             if ($scheduleDateTime) {
+                if (time() > strtotime($scheduleDateTime)) {
+                    Mage::helper('eepohs_erply')->log("New Schedule date $scheduleDateTime passed, moving forward");
+                    $scheduleDateTime = date("Y-m-d H:i:s");
+                }
+                Mage::helper('eepohs_erply')->log("Scheduling next product import increment to $scheduleDateTime");
                 Mage::getModel('eepohs_erply/cron')->addCronJob('erply_product_import', $scheduleDateTime);
+            } else {
+                Mage::helper('eepohs_erply')->log("No more product import scheduling");
             }
         }
     }

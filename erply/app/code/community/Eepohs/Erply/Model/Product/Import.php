@@ -32,7 +32,8 @@ class Eepohs_Erply_Model_Product_Import extends Eepohs_Erply_Model_Erply {
             $pageSize = $queue->getRecordsPerRun();
             $recordsLeft = $queue->getTotalRecords() - $pageSize * $queue->getLastPageNo();
             if ($queue->getChangedSince()) {
-                $params = array('changedSince' => $queue->getChangedSince());
+//uncomment if initial import completed and just getting product updates
+//                $params = array('changedSince' => $queue->getChangedSince());
             }
             if ($loops * $pageSize > $recordsLeft) {
                 $loops = ceil($recordsLeft / $pageSize);
@@ -54,9 +55,8 @@ class Eepohs_Erply_Model_Product_Import extends Eepohs_Erply_Model_Erply {
             $this->verifyUser($queue->getStoreId());
             $store = Mage::getModel('core/store')->load($queue->getStoreId());
             for ($i = $firstPage; $i <= ($firstPage + $loops); $i++) {
-
+                Mage::helper('eepohs_erply')->log("Product import in import: total=" . $queue->getTotalRecords() . " pageSize=$pageSize firstpage=$firstPage recordsLeft=$recordsLeft");
                 $parameters = array_merge(array('recordsOnPage' => $pageSize, 'pageNo' => $i), $params);
-                Mage::helper('eepohs_erply')->log("Erply request: ");
                 Mage::helper('eepohs_erply')->log($parameters);
                 $result = $this->sendRequest('getProducts', $parameters);
                 Mage::helper('eepohs_erply')->log("Erply product import:");
@@ -95,7 +95,7 @@ class Eepohs_Erply_Model_Product_Import extends Eepohs_Erply_Model_Erply {
                     $product->setTaxClassId(0);
                     $product->setAttributeSetId(4); // the product attribute set to use
                     $product->setName($_product["name"]);
-                    $product->setCategoryIds(array($_product["groupID"]+10000)); // array of categories it will relate to
+                    $product->setCategoryIds(array($_product["groupID"] + 10000)); // array of categories it will relate to
                     if (Mage::app()->isSingleStoreMode()) {
                         $product->setWebsiteIds(array(Mage::app()->getStore($queue->getStoreId())->getWebsiteId()));
                     } else {
@@ -105,7 +105,7 @@ class Eepohs_Erply_Model_Product_Import extends Eepohs_Erply_Model_Erply {
                     $product->setShortDescription($_product["description"]);
                     $product->setPrice($_product["price"]);
 
-                    $product->save();                    
+                    $product->save();
                     Mage::helper('eepohs_erply')->log("Added in Import: " . $product->getSku() . ", " . $product->getShortDescription());
                     Mage::helper('eepohs_erply')->log("Description data: " . $_product['description'] . " " . $_product['longdesc'] . " " . $product->getShortDescription() . " " . $product->getDescription());
                 }

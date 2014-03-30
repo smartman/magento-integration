@@ -97,10 +97,10 @@ class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply {
                 if (!$update) {
                     $product->setAttributeSetId((int) Mage::getStoreConfig('eepohs_erply/product/attribute_set', $storeId)); // the product attribute set to use
                 }
-                
-                $category = Mage::getModel('catalog/category')->load($_product["groupID"]+10000);
+
+                $category = Mage::getModel('catalog/category')->load($_product["groupID"] + 10000);
                 if ($category->getName()) {
-                    $product->setCategoryIds(array($_product["groupID"]+10000)); // array of categories it will relate to
+                    $product->setCategoryIds(array($_product["groupID"] + 10000)); // array of categories it will relate to
                 }
                 if (Mage::app()->isSingleStoreMode()) {
                     $product->setWebsiteIds(array(Mage::app()->getStore(true)->getWebsiteId()));
@@ -132,7 +132,7 @@ class Eepohs_Erply_Model_Product extends Eepohs_Erply_Model_Erply {
                     }
                 }
                 $product->save();
-                Mage::helper('eepohs_erply')->log("Added in Product: " . $product->getSku() . ", " . $product->getShortDescription());                
+                Mage::helper('eepohs_erply')->log("Added in Product: " . $product->getSku());
             }
         }
     }
