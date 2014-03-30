@@ -13,7 +13,6 @@
  *
  * @author Eepohs Ltd
  */
-
 class Eepohs_Erply_Model_Product_Import extends Eepohs_Erply_Model_Erply {
 
     public function getTotalRecords($storeId) {
@@ -60,11 +59,9 @@ class Eepohs_Erply_Model_Product_Import extends Eepohs_Erply_Model_Erply {
                 Mage::helper('eepohs_erply')->log("Erply request: ");
                 Mage::helper('eepohs_erply')->log($parameters);
                 $result = $this->sendRequest('getProducts', $parameters);
-                $return = "";
                 Mage::helper('eepohs_erply')->log("Erply product import:");
                 Mage::helper('eepohs_erply')->log($result);
                 $output = json_decode($result, true);
-                $start = time();
                 foreach ($output["records"] as $_product) {
 
                     if ($_product["code2"]) {
@@ -95,10 +92,10 @@ class Eepohs_Erply_Model_Product_Import extends Eepohs_Erply_Model_Erply {
                     $product->setVisibility(Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH);
                     $product->setStatus(1);
                     $product->setSku($sku);
-                    $product->setTaxClassId(0);                   
+                    $product->setTaxClassId(0);
                     $product->setAttributeSetId(4); // the product attribute set to use
                     $product->setName($_product["name"]);
-                    $product->setCategoryIds(array($_product["groupID"])); // array of categories it will relate to
+                    $product->setCategoryIds(array($_product["groupID"]+10000)); // array of categories it will relate to
                     if (Mage::app()->isSingleStoreMode()) {
                         $product->setWebsiteIds(array(Mage::app()->getStore($queue->getStoreId())->getWebsiteId()));
                     } else {
@@ -108,8 +105,9 @@ class Eepohs_Erply_Model_Product_Import extends Eepohs_Erply_Model_Erply {
                     $product->setShortDescription($_product["description"]);
                     $product->setPrice($_product["price"]);
 
-                    $product->save();
-                    Mage::helper('eepohs_erply')->log("Added: " . $product->getSku());
+                    $product->save();                    
+                    Mage::helper('eepohs_erply')->log("Added in Import: " . $product->getSku() . ", " . $product->getShortDescription());
+                    Mage::helper('eepohs_erply')->log("Description data: " . $_product['description'] . " " . $_product['longdesc'] . " " . $product->getShortDescription() . " " . $product->getDescription());
                 }
                 unset($output);
             }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NB! This is a BETA release of Erply Connector.
  *
@@ -12,30 +13,19 @@
  *
  * @author Eepohs Ltd
  */
+
 /**
  * Created by Rauno Väli
  * Date: 27.03.12
  * Time: 10:25
  */
-class Eepohs_Erply_Model_Inventory extends Mage_Core_Model_Abstract
-{
+class Eepohs_Erply_Model_Inventory extends Mage_Core_Model_Abstract {
 
-    public function _construct()
-    {
-        parent::_construct();
+    public function updatePrices() {
+        
     }
 
-    public function test() {
-        echo "Kalanaine!";
-    }
-
-    public function updatePrices()
-    {
-
-    }
-
-    public function updateInventory($products, $storeId)
-    {
+    public function updateInventory($products, $storeId) {
         Mage::helper('eepohs_erply')->log("Running Erply own updateInventory");
         foreach ($products as $_product) {
 
@@ -48,7 +38,7 @@ class Eepohs_Erply_Model_Inventory extends Mage_Core_Model_Abstract
             }
 
             $product = Mage::getModel('catalog/product')
-                ->loadByAttribute('sku', $sku);
+                    ->loadByAttribute('sku', $sku);
 
             if (!$product) {
                 $product = Mage::getModel('catalog/product')->load($_product["productID"]);
@@ -76,19 +66,19 @@ class Eepohs_Erply_Model_Inventory extends Mage_Core_Model_Abstract
             /**
              * Update price
              */
-//            $product->setPrice($_product["price"]);
+            $product->setPrice($_product["price"]);
             $product->save();
         }
     }
 
-    private function getProductQuantity($product)
-    {
+    private function getProductQuantity($product) {
         $quantity = 0;
-
-        foreach ($product['warehouses'] as $warehouse) {
-            $quantity += $warehouse['free'];
+        if (array_key_exists('warehouses', $product)) {
+            foreach ($product['warehouses'] as $warehouse) {
+                $quantity += $warehouse['free'];
+            }
         }
-
         return $quantity;
     }
+
 }

@@ -91,12 +91,13 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply {
 
                         $parameters = array('recordsOnPage' => $pageSize, 'pageNo' => $i);
                         $result = $this->sendRequest('getProductGroups', $parameters);
-                        //            $return = "";
+
                         $output = json_decode($result, true);
                         Mage::helper('eepohs_erply')->log("Erply Categories Response: " . $result);
-                        if ($output["status"]["responseStatus"] == "error" || count($output["records"]) == 0)
+                        if ($output["status"]["responseStatus"] == "error" || count($output["records"]) == 0) {
                             return false;
-                        //            $start = time();
+                        }
+
                         $categories = $output["records"];
                         if ($item->getStoreId() == 0) {
                             $rootCategory = Mage::app()->getWebsite(true)->getDefaultStore()->getRootCategoryId();
@@ -126,9 +127,9 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply {
                     $loops = $item->getLoopsPerRun();
                     $pageSize = $item->getRecordsPerRun();
                     $recordsLeft = $item->getTotalRecords() - $pageSize * $item->getLastPageNo();
-                    if ($item->getChangedSince()) {
-                        $params['changedSince'] = $item->getChangedSince();
-                    }
+//                    if ($item->getChangedSince()) {
+//                        $params['changedSince'] = $item->getChangedSince();
+//                    }
                     if ($loops * $pageSize > $recordsLeft) {
                         $loops = ceil($recordsLeft / $pageSize);
                         $item->setStatus(0);
@@ -305,18 +306,19 @@ class Eepohs_Erply_Model_Cron extends Eepohs_Erply_Model_Erply {
                             'recordsOnPage' => $pageSize,
                             'pageNo' => $i,
                             'displayedInWebshop' => 1,
-                            'active' => 1
+                            'active' => 1,
+                            'getStockInfo' => 1
                                 ), $params);
                         Mage::helper('eepohs_erply')->log("Erply request: ");
                         Mage::helper('eepohs_erply')->log($parameters);
                         $result = $this->sendRequest('getProducts', $parameters);
-                        $return = "";
                         Mage::helper('eepohs_erply')->log("Erply product import:");
 
                         $output = json_decode($result, true);
-                        if ($output["status"]["responseStatus"] == "error" || count($output["records"]) == 0)
+                        if ($output["status"]["responseStatus"] == "error" || count($output["records"]) == 0) {
                             return false;
-                        $start = time();
+                        }
+
                         $products = $output["records"];
                         Mage::getModel('eepohs_erply/product')->importProducts($products, $storeId, $store);
                         unset($output);

@@ -13,14 +13,7 @@
  *
  * @author Eepohs Ltd
  */
-
-/**
- * Created by Rauno Väli
- * Date: 27.03.12
- * Time: 10:25
- */
-class Eepohs_Erply_Model_Import extends Eepohs_Erply_Model_Erply
-{
+class Eepohs_Erply_Model_Import extends Eepohs_Erply_Model_Erply {
 
     private $type = array(
         'product_update' => 'getProducts',
@@ -31,34 +24,30 @@ class Eepohs_Erply_Model_Import extends Eepohs_Erply_Model_Erply
         'image_import' => 'getProducts',
         'price_update' => 'getPriceLists');
 
-    public function getTotalRecords($storeId, $importType, $params = array())
-    {
+    public function getTotalRecords($storeId, $importType, $params = array()) {
         $this->verifyUser($storeId);
         $parameters = array_merge(array(
             'recordsOnPage' => 1,
             'pageNo' => 1,
             'displayedInWebshop' => 1,
             'active' => 1,
-            ), $params);
-        if ( $importType == 'price_update' )
-        {
-            $parameters["pricelistID"] = Mage::getStoreConfig('eepohs_erply/product/pricelist',
-                    $storeId);
-        } elseif ( $importType == 'inventory_update' )
-        {
-            $parameters["warehouseID"] = Mage::getStoreConfig('eepohs_erply/product/warehouse',
-                    $storeId);
+                ), $params);
+        if ($importType == 'price_update') {
+            $parameters["pricelistID"] = Mage::getStoreConfig('eepohs_erply/product/pricelist', $storeId);
+        } elseif ($importType == 'inventory_update') {
+            $parameters["warehouseID"] = Mage::getStoreConfig('eepohs_erply/product/warehouse', $storeId);
         }
-        $results = json_decode($this->sendRequest($this->type[$importType],
-                $parameters), true);
+        $results = json_decode($this->sendRequest($this->type[$importType], $parameters), true);
         Mage::helper('eepohs_erply')->log($this->type[$importType]);
         Mage::helper('eepohs_erply')->log($parameters);
         Mage::helper('eepohs_erply')->log($results["status"]);
-        if ( $importType == 'price_update' )
-        {
-            $return = count($results["records"][0]["pricelistRules"]);
-        } else
-        {
+        if ($importType == 'price_update') {
+            if (array_key_exists(0, $results["records"])) { 
+                $return = count($results["records"][0]["pricelistRules"]);
+            } else {
+                $return = 0;
+            }
+        } else {
             $return = $results["status"]["recordsTotal"];
         }
 

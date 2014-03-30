@@ -22,8 +22,7 @@
  * @license  http://eepohs.com/ Eepohs Special License
  * @link     http://esc.eepohs.com/ Eepohs Software Channel
  */
-abstract class Eepohs_Erply_Model_Abstract extends Mage_Core_Model_Abstract
-{
+abstract class Eepohs_Erply_Model_Abstract extends Mage_Core_Model_Abstract {
 
     /**
      * @var Eepohs_Erply_Helper_Data
@@ -38,10 +37,8 @@ abstract class Eepohs_Erply_Model_Abstract extends Mage_Core_Model_Abstract
      * @param string $method
      * @param int $line
      */
-    public function log($message, $method = null, $line = null)
-    {
-        if ( is_null($this->_helper) )
-        {
+    public function log($message, $method = null, $line = null) {
+        if (is_null($this->_helper)) {
             $this->_helper = Mage::helper('eepohs_erply');
         }
         $this->_helper->log($message, $method, $line);

@@ -102,7 +102,6 @@ class Eepohs_Erply_Model_Observer extends Mage_Core_Model_Abstract
                     }
                     if($queueAdded) {
                         $cronSchedule->unsScheduleId()->save();
-
                         $exists[$jobCode . '/' . $ts] = 1;
                     }
                 } else {

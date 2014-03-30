@@ -13,8 +13,7 @@
  *
  * @author Eepohs Ltd
  */
-class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
-{
+class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract {
 
     const ERPLY_API_VERSION = '1.0';
     const ERPLY_RESPONSE_OK = 'ok';
@@ -27,18 +26,16 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
     private $session;
     public $userId;
 
-    protected function _construct()
-    {
+    protected function _construct() {
         parent::_construct();
     }
 
-    public function sendRequest($request, $parameters = array())
-    {
-        if ( !$this->getCode() || !$this->getUsername() || !$this->getPassword() )
-                return false;
+    public function sendRequest($request, $parameters = array()) {
+        Mage::helper('eepohs_erply')->log("Starting to send request to erply: " . $request);
+        if (!$this->getCode() || !$this->getUsername() || !$this->getPassword())
+            return false;
 
-        if ( $request != Eepohs_Erply_Model_Api_Response_Verifyuser::ERPLY_REQUEST && !$this->getSession() )
-        {
+        if ($request != Eepohs_Erply_Model_Api_Response_Verifyuser::ERPLY_REQUEST && !$this->getSession()) {
             return false;
         }
         $parameters['sessionKey'] = $this->getSession();
@@ -48,18 +45,16 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
 
         $url = $this->getUrl();
 
-        if ( $url )
-        {
+        if ($url) {
             $http = new Varien_Http_Adapter_Curl();
             $http->setConfig(array('timeout' => 100));
-            $http->write(Zend_Http_Client::POST, $url, CURL_HTTP_VERSION_1_0,
-                array(), $parameters);
+            $http->write(Zend_Http_Client::POST, $url, CURL_HTTP_VERSION_1_0, array(), $parameters);
             $responseBody = Zend_Http_Response::extractBody($http->read());
             $http->close();
+//            Mage::helper('eepohs_erply')->log("Response body: " . $responseBody);
             return $responseBody;
-        } else
-        {
-            $this->log("Cannot find URL for POS: " . $this->getCode());
+        } else {
+            Mage::helper('eepohs_erply')->log("Cannot find URL for POS: " . $this->getCode());
         }
         return false;
     }
@@ -69,8 +64,7 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
      *
      * @param string $code
      */
-    public function setCode($code)
-    {
+    public function setCode($code) {
         $this->code = $code;
     }
 
@@ -79,8 +73,7 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
      *
      * @param string $username
      */
-    public function setUsername($username)
-    {
+    public function setUsername($username) {
         $this->username = $username;
     }
 
@@ -89,8 +82,7 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
      *
      * @param string $password
      */
-    public function setPassword($password)
-    {
+    public function setPassword($password) {
         $this->password = $password;
     }
 
@@ -98,10 +90,9 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
      * Returns Erply POS URL
      * @return string
      */
-    public function getUrl()
-    {
-        if ( $this->getCode() )
-                return sprintf("https://%s.erply.com/api/", $this->getCode());
+    public function getUrl() {
+        if ($this->getCode())
+            return sprintf("https://%s.erply.com/api/", $this->getCode());
 
         return '';
     }
@@ -112,29 +103,25 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
      * @param type $storeId
      * @return boolean
      */
-    public function verifyUser($storeId)
-    {
-        if ( $this->getSession() )
-        {
+    public function verifyUser($storeId) {
+        if ($this->getSession()) {
             return true;
         }
         $this->setStoreId($storeId);
-        if ( !$this->getUsername() || !$this->getPassword() ) return false;
+        if (!$this->getUsername() || !$this->getPassword())
+            return false;
 
         $result = $this->sendRequest(
-            'verifyUser',
-            array(
+                'verifyUser', array(
             'username' => $this->getUsername(),
             'password' => $this->getPassword()
-            )
+                )
         );
         /**
          * @var Eepohs_Erply_Model_Api_Response_Verifyuser
          */
         $response = Mage::getModel('eepohs_erply/api_response_verifyuser', array(json_decode($result, true)));
-        if ( $response->getResponseStatus() == self::ERPLY_RESPONSE_OK && $sessionKey
-            = $response->getSessionKey() )
-        {
+        if ($response->getResponseStatus() == self::ERPLY_RESPONSE_OK && $sessionKey = $response->getSessionKey()) {
             $this->setSession($sessionKey);
             $this->setUserId($response->getEmployeeId());
             return true;
@@ -148,8 +135,7 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
      *
      * @param string $value
      */
-    public function setSession($value)
-    {
+    public function setSession($value) {
         $this->session = $value;
     }
 
@@ -158,19 +144,14 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
      *
      * @return string
      */
-    public function getSession()
-    {
+    public function getSession() {
         return $this->session;
     }
 
-    public function getConfig()
-    {
-        $this->username = Mage::getStoreConfig('eepohs_erply/account/username',
-                $this->storeId);
-        $this->password = Mage::getStoreConfig('eepohs_erply/account/password',
-                $this->storeId);
-        $this->code = Mage::getStoreConfig('eepohs_erply/account/code',
-                $this->storeId);
+    public function getConfig() {
+        $this->username = Mage::getStoreConfig('eepohs_erply/account/username', $this->storeId);
+        $this->password = Mage::getStoreConfig('eepohs_erply/account/password', $this->storeId);
+        $this->code = Mage::getStoreConfig('eepohs_erply/account/code', $this->storeId);
     }
 
     /**
@@ -178,12 +159,9 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
      *
      * @return string
      */
-    public function getUsername()
-    {
-        if ( is_null($this->username) )
-        {
-            $this->username = Mage::getStoreConfig('eepohs_erply/account/username',
-                    $this->storeId);
+    public function getUsername() {
+        if (is_null($this->username)) {
+            $this->username = Mage::getStoreConfig('eepohs_erply/account/username', $this->storeId);
         }
         return $this->username;
     }
@@ -193,12 +171,9 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
      *
      * @return string
      */
-    public function getPassword()
-    {
-        if ( is_null($this->password) )
-        {
-            $this->password = Mage::getStoreConfig('eepohs_erply/account/password',
-                    $this->storeId);
+    public function getPassword() {
+        if (is_null($this->password)) {
+            $this->password = Mage::getStoreConfig('eepohs_erply/account/password', $this->storeId);
         }
         return $this->password;
     }
@@ -208,12 +183,9 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
      *
      * @return string
      */
-    public function getCode()
-    {
-        if ( is_null($this->code) )
-        {
-            $this->code = Mage::getStoreConfig('eepohs_erply/account/code',
-                    $this->storeId);
+    public function getCode() {
+        if (is_null($this->code)) {
+            $this->code = Mage::getStoreConfig('eepohs_erply/account/code', $this->storeId);
         }
         return $this->code;
     }
@@ -224,10 +196,8 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
      *
      * @return int
      */
-    public function getStoreId()
-    {
-        if ( is_null($this->storeId) )
-        {
+    public function getStoreId() {
+        if (is_null($this->storeId)) {
             $this->storeId = Mage::app()->getStore()->getId();
         }
         return $this->storeId;
@@ -238,8 +208,7 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
      *
      * @param string $value
      */
-    public function setStoreId($value)
-    {
+    public function setStoreId($value) {
         $this->storeId = $value;
     }
 
@@ -248,8 +217,7 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
      *
      * @param string $value
      */
-    public function setUserId($value)
-    {
+    public function setUserId($value) {
         $this->userId = $value;
     }
 
@@ -258,8 +226,7 @@ class Eepohs_Erply_Model_Erply extends Eepohs_Erply_Model_Abstract
      *
      * @return string
      */
-    public function getUserId()
-    {
+    public function getUserId() {
         return $this->userId;
     }
 

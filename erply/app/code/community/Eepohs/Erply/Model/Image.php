@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NB! This is a BETA release of Erply Connector.
  *
@@ -12,21 +13,19 @@
  *
  * @author Eepohs Ltd
  */
+
 /**
  * Created by Rauno Väli
  * Date: 27.03.12
  * Time: 10:25
  */
-class Eepohs_Erply_Model_Image extends Mage_Core_Model_Abstract
-{
+class Eepohs_Erply_Model_Image extends Mage_Core_Model_Abstract {
 
-    public function _construct()
-    {
+    public function _construct() {
         parent::_construct();
     }
 
-    public function updateImages($products, $storeId)
-    {
+    public function updateImages($products, $storeId) {
         Mage::helper('eepohs_erply')->log("Running Erply Image Import");
         foreach ($products as $_product) {
 
@@ -39,7 +38,7 @@ class Eepohs_Erply_Model_Image extends Mage_Core_Model_Abstract
             }
 
             $product = Mage::getModel('catalog/product')
-                ->loadByAttribute('sku', $sku);
+                    ->loadByAttribute('sku', $sku);
 
             if (!$product) {
                 $product = Mage::getModel('catalog/product')->load($_product["productID"]);
@@ -49,13 +48,12 @@ class Eepohs_Erply_Model_Image extends Mage_Core_Model_Abstract
                     Mage::helper('eepohs_erply')->log("Editing old product: " . $_product["productID"]);
                 }
             }
-            if(!empty($_product["images"])) {
+            if (!empty($_product["images"])) {
                 $pos = 1;
-                foreach($_product["images"] as $image) {
+                foreach ($_product["images"] as $image) {
                     $url = $image["largeURL"];
-                    $image_type = substr(strrchr($url,"."),1);
+                    $image_type = substr(strrchr($url, "."), 1);
 //                    $filename = md5($url.$sku).".".$image_type;
-
 //                    if(!is_dir(Mage::getBaseDir('media').DS.'erply_import')) {
 //                        mkdir(Mage::getBaseDir('media').DS.'erply_import');
 //                    }
@@ -74,7 +72,7 @@ class Eepohs_Erply_Model_Image extends Mage_Core_Model_Abstract
                         'position' => $pos,
                         'exclude' => 0
                     );
-                    if($pos == 1) {
+                    if ($pos == 1) {
                         $imageData['types'] = array('image', 'small_image', 'thumbnail');
                     }
 
@@ -88,4 +86,5 @@ class Eepohs_Erply_Model_Image extends Mage_Core_Model_Abstract
             $product->save();
         }
     }
+
 }
